@@ -1,0 +1,35 @@
+name: Run JMeter Tests
+
+on:
+  push:
+    branches:
+      - main  # Trigger on pushes to the 'main' branch
+  pull_request:
+    branches:
+      - main  # Trigger on pull requests targeting 'main'
+
+jobs:
+  run-jmeter:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Run JMeter tests using PerfAction
+      - name: PerfAction for JMeter
+        uses: QAInsights/PerfAction@v5.6.2
+        with:
+          # JMeter test plan to execute
+          test-plan-path: './WebTours_TestPlan_Login1.jmx'
+          # Where to store the results (optional, default is result.jtl)
+          results-file: result.jtl
+
+      # Step 3: Upload JMeter test results
+      - name: Upload Results
+        uses: actions/upload-artifact@v3
+        with:
+          name: jmeter-results
+          path: result.jtl
+          if-no-files-found: error
